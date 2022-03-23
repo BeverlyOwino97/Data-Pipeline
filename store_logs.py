@@ -5,7 +5,7 @@ from datetime import datetime
 
 DB_NAME = "db.sqlite"
 
-def create_table():
+def create_table(): #SQLite database table
     conn = sqlite3.connect(DB_NAME)
 
     conn.execute("""
@@ -25,7 +25,7 @@ def create_table():
     conn.close()
 
 def parse_line(line):
-    split_line = line.split(" ")
+    split_line = line.split(" ") #Take a single log line, and split it on the space character ()
     if len(split_line) < 12:
         return []
     remote_addr = split_line[0]
@@ -36,7 +36,7 @@ def parse_line(line):
     body_bytes_sent = split_line[9]
     http_referer = split_line[10]
     http_user_agent = " ".join(split_line[11:])
-    created = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    created = datetime.now().strftime("%Y-%m-%dT%H:%M:%S") #Initialize a created variable that stores when the database record was created. This will enable future pipeline steps to query data.
 
     return [
         remote_addr,
@@ -63,18 +63,19 @@ LOG_FILE_B = "log_b.txt"
 
 if __name__ == "__main__":
     create_table()
-    try:
+    try: 
+        #Open both log files in reading mode. 
         f_a = open(LOG_FILE_A, 'r')
         f_b = open(LOG_FILE_B, 'r')
-        while True:
-            where_a = f_a.tell()
-            line_a = f_a.readline()
+        while True: #Loop forever 
+            where_a = f_a.tell() #Figure out where the current character being read for both files is (using the tell method).
+            line_a = f_a.readline() #Try to read a single line from both files (using the readline method).
             where_b = f_b.tell()
             line_b = f_b.readline()
 
             if not line_a and not line_b:
-                time.sleep(1)
-                f_a.seek(where_a)
+                time.sleep(1) #If neither file had a line written to it, sleep for a bit then try again.Before sleeping, set the reading point back to where we were originally (before calling readline), so that we don’t miss anything (using the seek method).
+                f_a.seek(where_a) #If one of the files had a line written to it, grab that line. Recall that only one file can be written to at a time, so we can’t get lines from both files.
                 f_b.seek(where_b)
                 continue
             else:
