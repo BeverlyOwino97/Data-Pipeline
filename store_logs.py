@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Apr 17 10:00:12 2022
+@author: bevakinyi
+"""
+
 import time
 import sys
 import sqlite3
